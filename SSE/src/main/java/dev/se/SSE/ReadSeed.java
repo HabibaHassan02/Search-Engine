@@ -4,7 +4,9 @@ import java.util.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+
 public class ReadSeed {
+
     Queue<String> seedsQeue = new LinkedList<> ();
     BufferedReader reader;
     public  ReadSeed(){

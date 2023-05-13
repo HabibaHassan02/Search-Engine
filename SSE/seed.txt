@@ -1,5 +1,10 @@
-https://www.reddit.com
-https://www.wikipedia.org
-https://stackoverflow.com
-https://www.imdb.com
-
+https://www.imdb.com/
+https://www.goodreads.com/
+https://www.vice.com/
+https://www.reddit.com/
+https://en.wikipedia.org/wiki/Main_Page
+https://variety.com/
+https://stackoverflow.com/questions/
+https://en.wikipedia.org/wiki/Computer_programming/
+https://www.wired.com/
+https://www.ign.com/
