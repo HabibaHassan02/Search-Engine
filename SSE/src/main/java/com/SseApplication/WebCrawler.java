@@ -13,7 +13,9 @@ import org.jsoup.select.Elements;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 public class WebCrawler implements Runnable {
     private MongoClient mongoClient;
@@ -26,8 +28,8 @@ public class WebCrawler implements Runnable {
 
     public WebCrawler(MongoClient mongoClient, MongoClientURI uri, HashSet<String> mapForLinksAndBodys, ReadSeed reader, Counter counter) {
         this.mongoClient = mongoClient;
-        this.mongoDatabase = mongoClient.getDatabase(uri.getDatabase());
-        this.mongoCollection = mongoDatabase.getCollection("Webcrawler data");
+        this.mongoDatabase = mongoClient.getDatabase("search-engine");
+        this.mongoCollection = mongoDatabase.getCollection("Crawler");
         this.mapForLinksAndBodys = mapForLinksAndBodys;
         this.reader = reader;
         this.counter = counter;
@@ -61,6 +63,12 @@ public class WebCrawler implements Runnable {
                 String title = doc.title();
                 Element body = doc.body();
                 String bodyText = body.text();
+                Elements headers = doc.select("h1,h2,h3");
+                List<String> headerList = new ArrayList<>();
+                for (Element header : headers) {
+                    headerList.add(header.text());
+                }
+
 
                 synchronized (mapForLinksAndBodys) {
                     if (mapForLinksAndBodys.contains(bodyText)) {
@@ -78,7 +86,9 @@ public class WebCrawler implements Runnable {
                 docToInsert.append("link", url);
                 docToInsert.append("title", title);
                 docToInsert.append("body", bodyText);
+                docToInsert.append("headers", headerList);
                 mongoCollection.insertOne(docToInsert);
+
 
                 int limitLinksGot = 0;
 
@@ -149,7 +159,8 @@ public class WebCrawler implements Runnable {
 
     public static void main(String[] args) throws IOException {
         MongoClientURI uri = new MongoClientURI("mongodb+srv://habibaelhussieny11:jOOr15g8khGvRca0@cluster0.eqvx01j.mongodb.net/");
-        MongoClient mongoClient = new MongoClient(uri);
+        MongoClient mongoClient;
+        mongoClient = new MongoClient(uri);
         ReadSeed reader = new ReadSeed();
         HashSet<String> mapForLinksAndBodys = new HashSet<String>();
         Counter counter = new Counter();
