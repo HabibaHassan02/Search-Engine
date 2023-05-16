@@ -2,6 +2,7 @@ package com.SseApplication.Entity;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,21 +15,15 @@ public class PageData {
 //	private String title;
 	private String url;
 	private float tf_idf;
-//	private int tf;
-//	private float idf;
-//	public int getTf() {
-//		return tf;
-//	}
-//	public void setTf(int tf) {
-//		this.tf = tf;
-//	}
-//	public float getIdf() {
-//		return idf;
-//	}
-//	public void setIdf(float idf) {
-//		this.idf = idf;
-//	}
-	private ArrayList<String> instancesInPage;
+	private String instancesInPage[];
+	private float tf;
+	
+	public float getTf() {
+		return tf;
+	}
+	public void setTf(float tf) {
+		this.tf = tf;
+	}
 	public String getUrl() {
 		return url;
 	}
@@ -41,10 +36,16 @@ public class PageData {
 	public void setTf_idf(float tf_idf) {
 		this.tf_idf = tf_idf;
 	}
-	public ArrayList<String> getInstancesInPage() {
+
+	
+	public String[] getInstancesInPage() {
 		return instancesInPage;
 	}
-	public void setInstancesInPage(ArrayList<String> instancesInPage) {
+	public void setInstancesInPage(String[] instancesInPage) {
 		this.instancesInPage = instancesInPage;
+	}
+	public void print() {
+		System.out.println(this.url);
+		System.out.println(this.tf_idf);
 	}
 }

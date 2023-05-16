@@ -10,8 +10,9 @@ import com.SseApplication.Entity.Indexer;
 import com.SseApplication.Entity.PageData;
 
 public interface IndexerRepository extends MongoRepository<Indexer,String>{
-	@Query(fields="{'_id' : 1}")
-    List<Indexer> findIndexers();
+	
+	@Query(value="{word:'?0'}", fields="{'hm' : 1}")
+    List<Indexer> findByWord(String word);
 //	void insert(Map<String, Map<String, PageData>> wordsHash, String string);
 
 }

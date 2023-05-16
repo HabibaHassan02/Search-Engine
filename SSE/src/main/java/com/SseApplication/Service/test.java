@@ -30,6 +30,7 @@ public class test {
 		String tags []= {"p","span","h1","h2","h3","h4","h5","h6"};
 		
 		
+		
 		String URL = "https://www.wikipedia.org/";
 		Map<String,PageData> urlHash = new HashMap<String,PageData>();
 		Map<String,Map<String,PageData>> wordsHash = new HashMap<String,Map<String,PageData>>();
@@ -42,7 +43,7 @@ public class test {
 		p.setUrl(URL);
 		ArrayList<String> a = new ArrayList<String>();
 		a.add("hhf");	
-		p.setInstancesInPage(a);
+//		p.setInstancesInPage(a);
 		urlHash.putIfAbsent(URL, p);
 		System.out.println(urlHash);
 //		Document doc = Jsoup.connect(URL).get(); 
