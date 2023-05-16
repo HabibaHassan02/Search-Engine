@@ -33,16 +33,14 @@ public class RankerService {
 		Map<String,Float> oldPopularityMap = new  HashMap<String,Float>() ; 
 		
 		float initialValue = 1;
-		
-		boolean isFirstIteration = true;
-		int numberIterations = 2;
+		int numberIterations = 100;
 		
 		for (int i = 0 ; i < numberIterations ; i++) {
-			if (isFirstIteration) {
+			if (i==0) {
 				for (CrawlerEntity page : crawledPages) {
 						for (String pointedToPages : page.getListOfLinks()) {
 							float popularityToBeInserted =  initialValue / (float) page.getListOfLinks().length;
-							if (! popularityMap.containsKey(popularityMap)) {
+							if (! popularityMap.containsKey(pointedToPages)) {
 								popularityMap.put(pointedToPages,  popularityToBeInserted);	
 							}else {
 								float lastValue = 	popularityMap.get(pointedToPages);
@@ -54,8 +52,12 @@ public class RankerService {
 				// get from the map calculated from previous iterations
 				for (CrawlerEntity page : crawledPages) {
 					for (String pointedToPages : page.getListOfLinks()) {
-						float popularityToBeInserted =  oldPopularityMap.get(page.getLink()) / (float) page.getListOfLinks().length;
-						if (! popularityMap.containsKey(popularityMap)) {
+						float popularityToBeInserted;
+						if (oldPopularityMap.containsKey(page.getLink()))
+							popularityToBeInserted =  oldPopularityMap.get(page.getLink()) / (float) page.getListOfLinks().length;
+						else
+							popularityToBeInserted =  1 / (float) page.getListOfLinks().length;
+						if (! popularityMap.containsKey(pointedToPages)) {
 							popularityMap.put(pointedToPages,  popularityToBeInserted);	
 						}else {
 							float lastValue = 	popularityMap.get(pointedToPages);
@@ -66,7 +68,7 @@ public class RankerService {
 			}
 			// new iteration
 			oldPopularityMap.putAll(popularityMap);
-			popularityMap = new HashMap<>();
+			popularityMap = new HashMap<String,Float>();
 		}
 		
 		for (Map.Entry<String,Float> entry : oldPopularityMap.entrySet() ) {
