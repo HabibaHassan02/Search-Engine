@@ -20,7 +20,7 @@ public class IndexerController {
 
 	@GetMapping("/indexer/addIndex")
 	public void addToIndexer() throws IOException {
-		 indexerServ.addToIndexer_2();
+		 indexerServ.indexingProcess();
 	}
 	
 	@GetMapping("/indexer/testResponse")

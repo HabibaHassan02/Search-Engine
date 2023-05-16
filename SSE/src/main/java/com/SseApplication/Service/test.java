@@ -1,13 +1,10 @@
 package com.SseApplication.Service;
-
+import java.util.regex.*;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -17,26 +14,46 @@ import org.jsoup.select.Elements;
 import com.SseApplication.Entity.PageData;
 
 
-
 public class test {
 //    urlLinks.add(URL);
-	public static boolean clean_str(String str) {
-		Pattern pattern = Pattern.compile("^.*\\..*$", Pattern.CASE_INSENSITIVE);
-	    Matcher matcher = pattern.matcher(str);
-	    boolean matchFound = matcher.find();
-	    return matchFound;
+	public static String clean_str(String str) {
+		
+		String returnedStr = str.replaceAll(">", "");
+		returnedStr = returnedStr.replaceAll("[\\]\\|\\[\\@\\,\\$\\%\\*\\&\\\\\\(\\)\\\":]", "");
+		returnedStr = returnedStr.replaceAll("\\.+", "");
+		returnedStr = returnedStr.replaceAll("^\s+", "");
+		
+	    return returnedStr.toLowerCase();
 	}
+	
+	
 	public static void main(String[] args) throws IOException {
 		String tags []= {"p","span","h1","h2","h3","h4","h5","h6"};
+		System.out.println(clean_str("4 > 5 @ [] |"));
 		
+		String myHtml = "<!DOCTYPE html>\r\n"
+		+ "<html>\r\n"
+		+ "<head>\r\n"
+		+ "<title>Page Title</title>\r\n"
+		+ "</head>\r\n"
+		+ "<body>\r\n"
+		+ "\r\n"
+		+ "<h1>My First Heading</h1>\r\n"
+		+ "<p>My first paragraph.</p>\r\n"
+		+ "\r\n"
+		+ "</body>\r\n"
+		+ "</html>";
 		
-		
-		String URL = "https://www.wikipedia.org/";
+		Document d = Jsoup.parse(myHtml);
+		Elements els = d.getElementsByTag("h1");
+		System.out.println(d.title());
+		String URL = "https://en.wikipedia.org/wiki/Main_Page";
 		Map<String,PageData> urlHash = new HashMap<String,PageData>();
 		Map<String,Map<String,PageData>> wordsHash = new HashMap<String,Map<String,PageData>>();
 	    // fetch the HTML code of the given URL by using the connect() and get() method and store the result in Document  
 	    Document doc = Jsoup.connect(URL).get();   
 //	    String URL = "https://www.wikipedia.org/";
+//	    doc.getElementsByTag("h1")
 		urlHash.put(URL, null);
 		System.out.println(urlHash);
 		PageData p = new PageData();
@@ -56,6 +73,9 @@ public class test {
 			}
 			System.out.println("--------------------------------------------------");
 		}
+		
+		
+		
 //		String s = e.text();
 //		String[] arrOfStr = s.split(" ", 0); // o makes the split applied as many times as possible
 //		for (String str: arrOfStr) {
