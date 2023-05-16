@@ -7,6 +7,8 @@ import com.SseApplication.Entity.PageData;
 import com.SseApplication.Repository.IndexedWebPages;
 import com.SseApplication.Repository.IndexerRepository;
 import com.SseApplication.Repository.WebCrawlerRepository;
+import com.github.hamzamemon.porterstemmer.stemming.PorterStemmer;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -98,7 +100,7 @@ public class IndexerService {
 				for (String word: wordsTemp) {
 					tempTotalNumberWords += 1;
 					word = (clean_str(word));  // key must not contain dot and intuitively words that contain dot must be splitted
-						
+					word = PorterStemmer.stem(word);
 						if (termFrequency.get(word) != null) {
 							termFrequency.put(word, termFrequency.get(word) + 1);
 							String [] tempStrArr = wordInstanceDocument.get(word);
@@ -242,7 +244,9 @@ public class IndexerService {
 			}else {
 				Map<String,PageData> websitesMap = new HashMap<String,PageData>();
 				websitesMap.put(title, p);
-				indexerRepo.insert(new Indexer(word,websitesMap));				
+				indexerRepo.insert(new Indexer(word,websitesMap));		
+//				indexerRepo.findStart
+				indexerRepo.findByWordLike("io");
 			}
 		}
 	}
@@ -352,6 +356,14 @@ public class IndexerService {
 	public void gettingValueIndexer() {
 //		Map<String, PageData> list =  indexerRepo.findAll();
 //		Iterator<Indexer> itr = list.iterator();
+		
+		List<Indexer> resOmar  = indexerRepo.findByWordLike("io");
+		
+		String m2 = resOmar.get(0).getWord();
+		System.out.println(m2);
+		
+		
+		
 		List<Indexer> res = indexerRepo.findByWord("Save");
 //		res.get(0)
 		System.out.println(res.size());

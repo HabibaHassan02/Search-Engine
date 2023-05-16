@@ -85,10 +85,12 @@ public class QueryProcessorService {
       List<Indexer> result = new ArrayList<>();
       for (String w : filtered)
       {
+          System.out.println(w);
           String stemmedWord = PorterStemmer.stem(w);
+          System.out.println(stemmedWord);
           List<Indexer> wordResult = indexerRepo.findByWord(stemmedWord);
           result.addAll(wordResult);
-
+          
       }
       System.out.println("salmaaaaaaaa222222");
       return result;

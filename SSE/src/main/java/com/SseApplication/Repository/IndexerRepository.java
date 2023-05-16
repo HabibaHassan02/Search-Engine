@@ -13,6 +13,12 @@ public interface IndexerRepository extends MongoRepository<Indexer,String>{
 	
 	@Query(value="{word:'?0'}", fields="{'hm' : 1}")
     List<Indexer> findByWord(String word);
+	
+	
+//	@Query(value="{word:'?0'}", fields="{'hm' : 1}")
+//	List<Indexer> findByWord2(String word);
 //	void insert(Map<String, Map<String, PageData>> wordsHash, String string);
+	
+	List<Indexer> findByWordLike(String word);
 
 }
