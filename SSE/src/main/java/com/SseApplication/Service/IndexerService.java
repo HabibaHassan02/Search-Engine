@@ -1,34 +1,21 @@
 package com.SseApplication.Service;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.index.Index;
-import org.springframework.data.util.Pair;
-import org.springframework.stereotype.Service;
-
 import com.SseApplication.Entity.CrawlerEntity;
-//import com.SseApplication.Entity.CrawlerEntity;
 import com.SseApplication.Entity.IndexedPages;
 import com.SseApplication.Entity.Indexer;
 import com.SseApplication.Entity.PageData;
 import com.SseApplication.Repository.IndexedWebPages;
 import com.SseApplication.Repository.IndexerRepository;
-//import com.SseApplication.Repository.WebCrawlerRepository;
 import com.SseApplication.Repository.WebCrawlerRepository;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.*;
 
 @Service
 public class IndexerService {
@@ -75,7 +62,6 @@ public class IndexerService {
 		String returnedStr = str.replaceAll(">", "");
 		returnedStr = returnedStr.replaceAll("[\\]\\|\\[\\@\\,\\$\\%\\*\\&\\\\\\(\\)\\\":]", "");
 		returnedStr = returnedStr.replaceAll("\\.+", "");
-		returnedStr = returnedStr.replaceAll("^\s+", "");
 		
 	    return returnedStr.toLowerCase();
 	}
