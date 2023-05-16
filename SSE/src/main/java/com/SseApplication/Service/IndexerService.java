@@ -1,5 +1,7 @@
 package com.SseApplication.Service;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +31,7 @@ import com.SseApplication.Repository.IndexedWebPages;
 import com.SseApplication.Repository.IndexerRepository;
 //import com.SseApplication.Repository.WebCrawlerRepository;
 import com.SseApplication.Repository.WebCrawlerRepository;
+import com.github.hamzamemon.porterstemmer.stemming.PorterStemmer;
 
 @Service
 public class IndexerService {
@@ -42,6 +45,34 @@ public class IndexerService {
 	IndexedWebPages indexedPagesRepo;
 	
 	PageData p0;
+	
+	private static final Set<String> STOPWORDS = loadStopwordsFromFile("stopwords.txt");
+
+	
+//	public static String stem(String word) {
+//		//remove any spaces in the word
+//		word= word.replaceAll("\\s", "");
+//		PorterStemmer stemedWord=new PorterStemmer();
+//		stemedWord.setCurrent(word);
+//		stemedWord.stem();
+//		System.out.println(stemedWord.getCurrent());
+//		return stemedWord.getCurrent().toLowerCase();
+//	}
+	
+    private static Set<String> loadStopwordsFromFile(String filename) {
+        Set<String> stopwords = new HashSet<>();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(filename));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                stopwords.add(line.trim());
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return stopwords;
+    }
 	
 	
 	enum myTags{
@@ -75,7 +106,7 @@ public class IndexerService {
 		String returnedStr = str.replaceAll(">", "");
 		returnedStr = returnedStr.replaceAll("[\\]\\|\\[\\@\\,\\$\\%\\*\\&\\\\\\(\\)\\\":]", "");
 		returnedStr = returnedStr.replaceAll("\\.+", "");
-		returnedStr = returnedStr.replaceAll("^\s+", "");
+//		returnedStr = returnedStr.replaceAll("^\s+", "");
 		
 	    return returnedStr.toLowerCase();
 	}
@@ -138,6 +169,7 @@ public class IndexerService {
 			// update or insert new
 			p.setInstancesInPage(myInstances);
 			p.setTf(localTF);
+			p.setUrl(URL);
 			if (indexerRepo.existsById(word)){
 				List<Indexer> websitesMapList = indexerRepo.findByWord(word);
 				Map<String,PageData> websitesMap = websitesMapList.get(0).getHm();

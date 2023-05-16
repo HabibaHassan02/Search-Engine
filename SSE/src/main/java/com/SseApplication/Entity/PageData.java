@@ -17,6 +17,7 @@ public class PageData {
 	private float tf_idf;
 	private String instancesInPage[];
 	private float tf;
+	private float popularity;
 	
 	public float getTf() {
 		return tf;
