@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Document
-@AllArgsConstructor
 @NoArgsConstructor
 public class RankerEntity {
 	
