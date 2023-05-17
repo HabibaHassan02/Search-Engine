@@ -153,7 +153,7 @@ public class IndexerService {
 //		 userName = myObj.nextLine();
 		for (String tag:tags) {
 			Elements e = doc.getElementsByTag(tag);
-			System.out.println(tag + "**************************");
+//			System.out.println(tag + "**************************");
 //			Elements e = doc.select("body");
 			p = new PageData();  // new page data
 			String [] tempArr = new String [8];
@@ -181,7 +181,7 @@ public class IndexerService {
 						}	
 				}
 			}
-			System.out.println("--------------------------------------------------");
+//			System.out.println("--------------------------------------------------");
 		}
 		
 		

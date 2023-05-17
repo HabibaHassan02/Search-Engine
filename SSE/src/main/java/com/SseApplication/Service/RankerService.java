@@ -39,6 +39,7 @@ public class RankerService {
 			if (i==0) {
 				for (CrawlerEntity page : crawledPages) {
 						for (String pointedToPages : page.getListOfLinks()) {
+//							popularityMap.put(,initialValue)
 							float popularityToBeInserted =  initialValue / (float) page.getListOfLinks().length;
 							if (! popularityMap.containsKey(pointedToPages)) {
 								popularityMap.put(pointedToPages,  popularityToBeInserted);	
@@ -74,7 +75,7 @@ public class RankerService {
 		for (Map.Entry<String,Float> entry : oldPopularityMap.entrySet() ) {
 			String word = entry.getKey();
 			float popularity = (float) entry.getValue();
-			
+				
 			rankerRepo.insert(new RankerEntity(word,popularity));
 			
 		}

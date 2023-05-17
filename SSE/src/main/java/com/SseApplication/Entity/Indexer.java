@@ -7,9 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.Map;
 
 @Document
-//@AllArgsConstructor
-@NoArgsConstructor
-//@Data
+//@NoArgsConstructor
 public class Indexer {
 	@Id
 	String word;
@@ -22,6 +20,10 @@ public class Indexer {
 		this.word = word;
 		this.hm = hm;
 		this.idf = idf;
+	}
+
+	public Indexer() {
+		// TODO Auto-generated constructor stub
 	}
 
 	public double getIdf() {
