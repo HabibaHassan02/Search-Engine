@@ -1,9 +1,10 @@
 package com.SseApplication.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import javafx.util.Pair;
+
+import com.SseApplication.Entity.Indexer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -81,6 +82,34 @@ public class RankerService {
 		}
 		
 		
+	}
+	public static String replaceHashTagsByDots(String str) {
+		String returnedStr = str.replaceAll("#", "\\.");
+		return returnedStr;
+	}
+	public PriorityQueue<Pair<Double, String>> Relevance(List<Indexer> documents){
+		List<RankerEntity> ranker= rankerRepo.findAll();
+		PriorityQueue<Pair<Double, String>> pq = new PriorityQueue<>(new Comparator<Pair<Double, String>>() {
+			@Override
+			public int compare(Pair<Double, String> p1, Pair<Double, String> p2) {
+				return p1.getValue().compareTo(p2.getValue());
+			}
+		});
+		for (Indexer word:documents){
+			//double idf= word.getIdf();
+			double idf=1;
+			for (Map.Entry<String,PageData> entry : word.getHm().entrySet()){
+				String link = entry.getKey();
+				PageData data= entry.getValue();
+				List<RankerEntity> rankentity=rankerRepo.findByWebsiteTitle(replaceHashTagsByDots(link));
+				if (rankentity.size()>0) {
+					float popularity = rankentity.get(0).getPopularity();
+					double rank = idf * data.getTf() + popularity;
+					pq.add(new Pair<Double,String>(rank, link));
+				}
+			}
+		}
+		return pq;
 	}
 }
 

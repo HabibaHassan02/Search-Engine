@@ -4,6 +4,8 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import com.SseApplication.Entity.RankerEntity;
 
-public interface RankerRepository extends MongoRepository<RankerEntity, String>{
+import java.util.List;
 
+public interface RankerRepository extends MongoRepository<RankerEntity, String>{
+    List<RankerEntity> findByWebsiteTitle(String websiteTitle);
 }

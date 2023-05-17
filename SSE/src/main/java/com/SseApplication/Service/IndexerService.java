@@ -233,7 +233,7 @@ public class IndexerService {
 		populateTagsLocation();
 		STOPWORDS = loadStopwordsFromFile("stop_words");
 		getCrawledPages();
-//		addIDF();
+		addIDF();
 	}
 	
 	public void addIDF() {
