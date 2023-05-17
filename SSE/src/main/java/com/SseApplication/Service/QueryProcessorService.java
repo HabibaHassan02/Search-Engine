@@ -1,19 +1,18 @@
 package com.SseApplication.Service;
 
 import com.SseApplication.Entity.Indexer;
+import com.SseApplication.Entity.PageData;
 import com.SseApplication.Repository.IndexedWebPages;
 import com.SseApplication.Repository.IndexerRepository;
 import com.SseApplication.Repository.WebCrawlerRepository;
 import com.github.hamzamemon.porterstemmer.stemming.PorterStemmer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -73,10 +72,59 @@ public class QueryProcessorService {
 
   public List<Indexer> search_in_indexer(String word)
   {
+
       if (word.startsWith("\"") && word.endsWith("\"")) {
           String phrase = word.substring(1, word.length() - 1);
-          List<Indexer> result = indexerRepo.findByWord(phrase);
+          phrase=phrase.trim();
+          //phrase = clean_str(phrase);
+          String[] phrases = phrase.split("\\s+");
+
+          List<String> filteredd = Arrays.stream(phrases)
+                  .filter(p -> !STOPWORDS.contains(phrases))
+                  .collect(Collectors.toList());
+          List<Indexer> result = new ArrayList<>();
+
+          for (Indexer indexer : indexerRepo.findAll()) {
+              String keyword=indexer.getWord();
+              if(keyword.equals( PorterStemmer.stem(filteredd.get(0).toLowerCase())))
+              {
+                  Map<String, PageData> hm = indexer.getHm();
+                  System.out.println(hm.keySet());
+                  Indexer Ind2 = new Indexer();
+                  for (PageData pageData : hm.values())
+                  {
+
+                      String[] instancesInPage = pageData.getInstancesInPage();
+
+                      for(int i=0 ; i< instancesInPage.length;i++)
+                      {
+                          if(instancesInPage[i]!=null && instancesInPage[i].contains(phrase))
+                          {
+                              System.out.println("yessss");
+
+                              Ind2.setWord(filteredd.get(0).toLowerCase());
+                              PageData newPageData = new PageData();
+                              newPageData.setUrl(pageData.getUrl());
+                              newPageData.setTf_idf(pageData.getTf_idf());
+                              newPageData.setInstancesInPage(pageData.getInstancesInPage());
+                              newPageData.setTf(pageData.getTf());
+                              Ind2.getHm().put("",newPageData);
+
+
+
+                          }
+                      }
+                  }
+              }
+              else
+              {
+                  continue;
+              }
+
+          }
           return result;
+
+
       }
       String newword=clean_str(word);
       System.out.println("salmaaaaaaaa");
@@ -87,15 +135,15 @@ public class QueryProcessorService {
       {
           System.out.println(w);
           String stemmedWord = PorterStemmer.stem(w);
+
+          System.out.println("stemmed is : ");
+
           System.out.println(stemmedWord);
           List<Indexer> wordResult = indexerRepo.findByWord(stemmedWord);
           result.addAll(wordResult);
           
       }
-      System.out.println("salmaaaaaaaa222222");
+
       return result;
   }
-
-
-
 }
