@@ -93,7 +93,7 @@ public class QueryProcessorService {
                 if(keyword.equals( PorterStemmer.stem(filteredd.get(0).toLowerCase())))
                 {
                     Map<String, PageData> hm = indexer.getHm();
-                    System.out.println(hm.keySet());
+
                     Indexer Ind2 = new Indexer();
                     
                     for (Map.Entry<String,PageData> entry : hm.entrySet())
@@ -109,7 +109,6 @@ public class QueryProcessorService {
                         {
                             if(instancesInPage[i]!=null && instancesInPage[i].contains(phrase))
                             {
-//                                System.out.println("yessss");
                                 Ind2.setWord(filteredd.get(0).toLowerCase());
 
                                 newPageData.setTitle(pageData.getTitle());
@@ -144,18 +143,16 @@ public class QueryProcessorService {
         // Not phrase searching
         
         String newword=clean_str(word);
-        System.out.println("salmaaaaaaaa");
+
         List<String> newwords=tokenize_str(newword);
         List<String>filtered=remove_stopwords(newwords);
         List<Indexer> result = new ArrayList<>();
         for (String w : filtered)
         {
-            System.out.println(w);
+
             String stemmedWord = PorterStemmer.stem(w);
 
-            System.out.println("stemmed is : ");
 
-            System.out.println(stemmedWord);
             List<Indexer> wordResult = indexerRepo.findByWord(stemmedWord);
             result.addAll(wordResult);
 
