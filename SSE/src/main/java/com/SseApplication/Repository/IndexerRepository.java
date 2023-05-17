@@ -11,7 +11,7 @@ import com.SseApplication.Entity.PageData;
 
 public interface IndexerRepository extends MongoRepository<Indexer,String>{
 	
-	@Query(value="{word:'?0'}", fields="{'hm' : 1}")
+	@Query(value="{word:'?0'}")
     List<Indexer> findByWord(String word);
 	
 	

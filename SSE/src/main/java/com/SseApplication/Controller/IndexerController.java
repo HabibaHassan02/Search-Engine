@@ -27,4 +27,9 @@ public class IndexerController {
 	public void test() throws IOException {
 		 indexerServ.gettingValueIndexer();
 	}
+	
+	@GetMapping("/indexer/addIdf")
+	public void addIdf() throws IOException {
+		 indexerServ.addIDF();
+	}
 }

@@ -57,7 +57,7 @@ public class test {
 		urlHash.put(URL, null);
 		System.out.println(urlHash);
 		PageData p = new PageData();
-		p.setUrl(URL);
+		p.setTitle(URL);
 		ArrayList<String> a = new ArrayList<String>();
 		a.add("hhf");	
 //		p.setInstancesInPage(a);

@@ -14,14 +14,24 @@ public class Indexer {
 	@Id
 	String word;
 	Map<String, PageData> hm;  // map title to the data of the page title
-	public Indexer(String word, Map<String, PageData> hm) {
+	double idf;
+	
+	
+	public Indexer(String word, Map<String, PageData> hm, double idf) {
 		// TODO Auto-generated constructor stub
 		this.word = word;
 		this.hm = hm;
+		this.idf = idf;
 	}
-//	public Indexer() {
-//		hm = new HashMap<>();
-//	}
+
+	public double getIdf() {
+		return idf;
+	}
+
+	public void setIdf(double idf) {
+		this.idf = idf;
+	}
+
 	public String getWord() {
 		return word;
 	}
