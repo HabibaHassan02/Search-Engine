@@ -92,19 +92,27 @@ public class RankerService {
 		PriorityQueue<Pair<Double, String>> pq = new PriorityQueue<>(new Comparator<Pair<Double, String>>() {
 			@Override
 			public int compare(Pair<Double, String> p1, Pair<Double, String> p2) {
-				return p1.getValue().compareTo(p2.getValue());
+				return Double.compare(p2.getKey(), p1.getKey()); //sort priority queue in descending order according to the Rank value in the key
 			}
 		});
 		for (Indexer word:documents){
-			//double idf= word.getIdf();
-			double idf=1;
+			double idf= word.getIdf();
 			for (Map.Entry<String,PageData> entry : word.getHm().entrySet()){
-				String link = entry.getKey();
-				PageData data= entry.getValue();
+				String link = entry.getKey(); //get the link that this word is mentioned in it
+				PageData data= entry.getValue(); //get the data of the website: tf, title, popularity and instances
+				int pri_acc_to_place=1;
+				String[] instances= data.getInstancesInPage();
+				for (int i=0; i<8 ;i++){
+					if (instances[i]!=null) //the highest pri is h1: of index 0, so priority = 9 minus index so the highest priority=9 and the smallest=1
+					{
+						pri_acc_to_place = 9 - i;
+						break;
+					}
+				}
 				List<RankerEntity> rankentity=rankerRepo.findByWebsiteTitle(replaceHashTagsByDots(link));
 				if (rankentity.size()>0) {
 					float popularity = rankentity.get(0).getPopularity();
-					double rank = idf * data.getTf() + popularity;
+					double rank = (double)(idf * data.getTf() + popularity)*pri_acc_to_place;
 					pq.add(new Pair<Double,String>(rank, link));
 				}
 			}
