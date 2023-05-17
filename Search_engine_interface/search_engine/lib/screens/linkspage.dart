@@ -16,14 +16,14 @@ class LinksPage extends StatefulWidget {
 }
 
 class _LinksPageState extends State<LinksPage> {
-  late Future<List<Indexer>> indexes;
+  late Future<List> indexes;
   
   @override
   void initState() {
     super.initState();
     SearchService searchService = SearchService();
     indexes = searchService.getfromqueryprocessor(widget.query);
-    
+
   }
 
   @override

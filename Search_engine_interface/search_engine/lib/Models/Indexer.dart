@@ -13,6 +13,7 @@ class Indexer{
  factory Indexer.fromJson(Map<String, dynamic> json) {
   var hmJson = json['hm'] as Map<String, dynamic>;
   var hm = <String, PageData>{};
+
   hmJson.forEach((key, value) {
     hm[key] = PageData.fromJson(value);
   });

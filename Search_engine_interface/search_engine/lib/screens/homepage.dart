@@ -31,14 +31,7 @@ class _HomePageState extends State<HomePage> {
         ),
         Opacity(
           opacity: 0.45, // adjust the opacity of the watermark
-          child: Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage("images/galaxy2.png"), // your watermark image
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
+
         ),
         Scaffold(
           appBar: AppBar(
@@ -106,14 +99,7 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Container(
-                      margin: EdgeInsets.only(top: 70),
-                      width: MediaQuery.of(context).size.width * 0.5,
-                      height: 200,
-                      child: Image(
-                        image: AssetImage("images/google.png"),
-                        fit: BoxFit.contain,
-                      )),
+
                   Container(
                     margin: EdgeInsets.only(top: 40),
                     width: MediaQuery.of(context).size.width * 0.5,

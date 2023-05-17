@@ -12,13 +12,13 @@ class SearchService {
 
   SearchService([http.Client? httpClient]) : _httpClient = httpClient ?? http.Client();
 
-  Future<List<Indexer>> getfromqueryprocessor(String query) async {
+  Future<List> getfromqueryprocessor(String query) async {
     final Map<String, String> headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     };
      
-    final Uri url = Uri.parse('http://localhost:8080/queryprocessor/search/$query');
+    final Uri url = Uri.parse('http://10.0.2.2:8080/queryprocessor/search/$query');
     
     try {
       final response = await _httpClient.get(url, headers: headers);
@@ -26,8 +26,8 @@ class SearchService {
       if (response.statusCode == 200) {
         print("sucess");
         final jsonList = json.decode(response.body) as List;
-        final List<Indexer> result = jsonList.map((json) => Indexer.fromJson(json)).toList();
-        return result;
+        //final List<Indexer> result = jsonList.map((json) => Indexer.fromJson(json)).toList();
+        return jsonList;
       } else {
         print("failure");
         throw 'Request failed with status: ${response.statusCode}';

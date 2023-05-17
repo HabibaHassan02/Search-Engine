@@ -44,18 +44,19 @@ import java.util.*;
 public class IndexerService {
 	@Autowired
 	IndexerRepository indexerRepo;
-	
+
 	@Autowired
 	WebCrawlerRepository crawlerRepo;
-	
+
 	@Autowired
 	IndexedWebPages indexedPagesRepo;
-	
+
 	PageData p0;
-	
+
 	private static Set<String> STOPWORDS = loadStopwordsFromFile("stop_words");
 
-	
+	List<CrawlerEntity> listCrawledPages;
+
 //	public static String stem(String word) {
 //		//remove any spaces in the word
 //		word= word.replaceAll("\\s", "");
@@ -65,23 +66,23 @@ public class IndexerService {
 //		System.out.println(stemedWord.getCurrent());
 //		return stemedWord.getCurrent().toLowerCase();
 //	}
-	
-    private static Set<String> loadStopwordsFromFile(String filename) {
-        Set<String> stopwords = new HashSet<>();
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(filename));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                stopwords.add(line.trim());
-            }
-            reader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return stopwords;
-    }
-	
-	
+
+	private static Set<String> loadStopwordsFromFile(String filename) {
+		Set<String> stopwords = new HashSet<>();
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(filename));
+			String line;
+			while ((line = reader.readLine()) != null) {
+				stopwords.add(line.trim());
+			}
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return stopwords;
+	}
+
+
 	enum myTags{
 		h1,
 		h2,
@@ -93,7 +94,7 @@ public class IndexerService {
 		span
 	}
 	Map <String,Integer> tagsLocation = new HashMap<String,Integer>();
-	
+
 	// open stop words here
 	// stop words file contain words that are seperated by comma
 	//TODO
@@ -107,33 +108,35 @@ public class IndexerService {
 		tagsLocation.put("p", 6);
 		tagsLocation.put("span", 7);
 	}
-	
+
 	public static String clean_str(String str) {
-		
+
 		String returnedStr = str.replaceAll(">", "");
 		returnedStr = returnedStr.replaceAll("[\\]\\|\\[\\@\\,\\$\\%\\*\\&\\\\\\(\\)\\\":\\?!]", "");
 		returnedStr = returnedStr.replaceAll("\\.+", "");
-	    return returnedStr.toLowerCase();
+		returnedStr = returnedStr.replaceAll("[0-9]+" , "");
+		returnedStr = returnedStr.replaceAll("-+", "");
+		return returnedStr.toLowerCase();
 	}
-	
+
 	public static String removeDots(String str) {
 		String returnedStr = str.replaceAll("\\.", "");
-		return returnedStr;	
+		return returnedStr;
 	}
-	
+
 	public static String replaceDotsByHahTags(String str) {
 		String returnedStr = str.replaceAll("\\.", "#");
-		return returnedStr;	
+		return returnedStr;
 	}
-	
+
 	public  void addToIndexer_3(String URL, String documentArg) throws IOException {
-		
+
 //		 Scanner myObj = new Scanner(System.in);  // Create a Scanner object
 //		    System.out.println("Enter username");
 //
 //		    String userName = myObj.nextLine();  // Read user input
 //		    System.out.println("Username is: " + userName);
-		
+
 		Map<String,Map<String,PageData>> wordsHash = new HashMap<String,Map<String,PageData>>();  // hashmap for word and its map
 		Set<String> set = new HashSet<>(); //set ensures that word is not repeated twice
 		Document doc = Jsoup.parse(documentArg);
@@ -153,7 +156,7 @@ public class IndexerService {
 //		 userName = myObj.nextLine();
 		for (String tag:tags) {
 			Elements e = doc.getElementsByTag(tag);
-//			System.out.println(tag + "**************************");
+//			System.out.println(tag + "**********");
 //			Elements e = doc.select("body");
 			p = new PageData();  // new page data
 			String [] tempArr = new String [8];
@@ -161,30 +164,30 @@ public class IndexerService {
 			for (Element es: e) {   //get all elements in the tag and convert to text
 				String s = es.text();
 //				System.out.println(es.text());
-				String[] wordsTemp = s.split(" ", 0); 
-				
+				String[] wordsTemp = s.split(" ", 0);
+
 				for (String word: wordsTemp) {
 					tempTotalNumberWords += 1;
 					word = PorterStemmer.stem(word);
 					word = (clean_str(word));  // key must not contain dot and intuitively words that contain dot must be splitted
 					if (STOPWORDS.contains(word) || word.equals("")) continue;
-						if (termFrequency.get(word) != null) {
-							termFrequency.put(word, termFrequency.get(word) + 1);
-							String [] tempStrArr = wordInstanceDocument.get(word);
-							tempStrArr[tagsLocation.get(tag)] = s;
-							wordInstanceDocument.put(word, tempStrArr);
-						}else {
-							termFrequency.put(word, 1);
-							String [] tempStrArr = new String[8];
-							tempStrArr[tagsLocation.get(tag)] = s;
-							wordInstanceDocument.put(word, tempStrArr);
-						}	
+					if (termFrequency.get(word) != null) {
+						termFrequency.put(word, termFrequency.get(word) + 1);
+						String [] tempStrArr = wordInstanceDocument.get(word);
+						tempStrArr[tagsLocation.get(tag)] = s;
+						wordInstanceDocument.put(word, tempStrArr);
+					}else {
+						termFrequency.put(word, 1);
+						String [] tempStrArr = new String[8];
+						tempStrArr[tagsLocation.get(tag)] = s;
+						wordInstanceDocument.put(word, tempStrArr);
+					}
 				}
 			}
 //			System.out.println("--------------------------------------------------");
 		}
-		
-		
+
+
 		URL = replaceDotsByHahTags(URL);
 		for (Map.Entry<String,Integer> entry : termFrequency.entrySet() ) {
 			String word = entry.getKey();
@@ -201,41 +204,76 @@ public class IndexerService {
 				List<Indexer> websitesMapList = indexerRepo.findByWord(word);
 				Map<String,PageData> websitesMap = websitesMapList.get(0).getHm();
 				websitesMap.put(URL, p);
-				 indexerRepo.save(new Indexer(word,websitesMap, idf));
+				indexerRepo.save(new Indexer(word,websitesMap, idf));
 			}else {
 				Map<String,PageData> websitesMap = new HashMap<String,PageData>();
 				websitesMap.put(URL, p);
 //				System.out.println("Hiliorggngd");
-				indexerRepo.insert(new Indexer(word,websitesMap, idf));				
+				indexerRepo.insert(new Indexer(word,websitesMap, idf));
 			}
 		}
 	}
-	
-	
-	
-	
-	void getCrawledPages () throws IOException {
-		List<CrawlerEntity> listCrawledPages = crawlerRepo.findAll();
-		System.out.println("Meeeeeeeeeeeeeeeeeeeeeeeeeeee");
-		
-		int counter = 0;
-		for (CrawlerEntity crawled : listCrawledPages) {
-//			System.out.println("Before");
-			addToIndexer_3(crawled.getLink(), crawled.getHtml());
-//			System.out.println("After");
-			counter += 1;
 
+
+
+
+	void getCrawledPages () throws IOException {
+		listCrawledPages = crawlerRepo.findAll();
+		long count = crawlerRepo.count();
+		int numThreads =  4;
+
+		long elementsPerProcess = count/numThreads;
+		if (count / (float)(numThreads) > count / numThreads) {
+			elementsPerProcess += 1;
 		}
-		System.out.println(counter+"[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[");
+
+//	 	int chunkSize = arr.length / numThreads;
+
+//	 	List<Thread> threads = new ArrayList<>();
+
+		for (int i = 0 ; i < numThreads; i++) {
+//	 		System.out.println("Meeeeeeeeeeeeeeeeeeeeeeeeeeee");
+			long start = i * elementsPerProcess;
+			long currentEnd = start + elementsPerProcess;
+			long end = (currentEnd < count)? currentEnd: count - 1;
+			Thread thr = new Thread(new Runnable() {
+
+
+				@Override
+				public void run() {
+					for (long i = start; i < end ; i++) {
+						CrawlerEntity crawled = listCrawledPages.get((int)i);
+						try {
+							addToIndexer_3(crawled.getLink(), crawled.getHtml());
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			});
+
+			thr.start();
+		}
+
+
+//		int counter = 0;
+//		for (CrawlerEntity crawled : listCrawledPages) {
+////			System.out.println("Before");
+//			addToIndexer_3(crawled.getLink(), crawled.getHtml());
+////			System.out.println("After");
+//			counter += 1;
+//		}
+//		System.out.println(counter+"[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[");
 	}
-	
+
 	public void indexingProcess() throws IOException {
 		populateTagsLocation();
 		STOPWORDS = loadStopwordsFromFile("stop_words");
 		getCrawledPages();
 		addIDF();
+		System.out.println("Enddddddddddddddddd");
 	}
-	
+
 	public void addIDF() {
 		long countCrawledPages = crawlerRepo.count();
 		// iterate over indexer words to get the idf
@@ -246,110 +284,24 @@ public class IndexerService {
 			idf =  Math.log(countCrawledPages/numberPagesContainWord);
 			indexerRepo.save(new Indexer(page.getWord(),page.getHm(),idf));
 		}
-		
-	}
-	
-	/////////////////////////
-	/////////////////////////
-	/////////////////////////
-	/////////////////////////
-	public  void addToIndexer_2() throws IOException {
-		
-//		getCrawledPages();
-		String tags []= {"p","span","h1","h2","h3","h4","h5","h6"};
-//		Map<String,PageData> websitesMap = new HashMap<String,PageData>();
-		Map<String,Map<String,PageData>> wordsHash = new HashMap<String,Map<String,PageData>>();  // hashmap for word and its map
-		Set<String> set = new HashSet<>(); //set ensures that word is not repeated twice
-		String URL = "https://www.wikipedia.org/";
-		Document doc2 = Jsoup.connect(URL).get(); 
-//		crawlerRepo.insert(new CrawlerEntity(URL,doc2));
-		Document doc = Jsoup.connect(URL).get(); 
-		Map<String,String[]> wordInstanceDocument = new HashMap<String,String[]>();  // contains the instance of the word in the document
-		String title = doc.title();
-		if (indexedPagesRepo.existsById(title)) return;  // return from function
-		else indexedPagesRepo.insert(new IndexedPages(title));
-		
-//		int totalNumberWords = doc.text().split(" ").length;  // total number of words in a document
-		
-		PageData p = new PageData();
-		
-		int tf;
-		Map<String,Integer> termFrequency = new HashMap<String,Integer>();
-		
-		// get set of words from the database
-		int tempTotalNumberWords = 0;
-		for (String tag:tags) {
-			Elements e = doc.getElementsByTag(tag);
-			System.out.println(tag + "**************************");
-//			Elements e = doc.select("body");
-			p = new PageData();  // new page data
-			String [] tempArr = new String [8];
-			p.setInstancesInPage(tempArr);
-			for (Element es: e) {   //get all elements in the tag and convert to text
-//				System.out.println(es.text());
-				String s = es.text();
-				String[] wordsTemp = s.split(" ", 0); 
-				
-				for (String word: wordsTemp) {
-					tempTotalNumberWords += 1;
-					word = (clean_str(word));  // key must not contain dot and intuitively words that contain dot must be splitted
-						
-						if (termFrequency.get(word) != null) {
-							termFrequency.put(word, termFrequency.get(word) + 1);
-							String [] tempStrArr = wordInstanceDocument.get(word);
-							tempStrArr[tagsLocation.get(tag)] = s;
-							wordInstanceDocument.put(title, tempStrArr);
-						}else {
-							termFrequency.put(word, 1);
-							String [] tempStrArr = new String[8];
-							tempStrArr[tagsLocation.get(tag)] = s;
-							wordInstanceDocument.put(word, tempStrArr);
-						}
-						
-				}
-			}
-			System.out.println("--------------------------------------------------");
-		}
-		
-		for (Map.Entry<String,Integer> entry : termFrequency.entrySet() ) {
-			String word = entry.getKey();
-			Float localTF = (float) entry.getValue() / tempTotalNumberWords;
-//			System.out.println(entry.getValue());
-//			System.out.println(localTF.toString());
-			String [] myInstances = wordInstanceDocument.get(word);
-			// update or insert new
-			p.setInstancesInPage(myInstances);
-			p.setTf(localTF);
-			p.setTitle(title);
-			if (indexerRepo.existsById(word)){
-				List<Indexer> websitesMapList = indexerRepo.findByWord(word);
-				Map<String,PageData> websitesMap = websitesMapList.get(0).getHm();
-				websitesMap.put(title, p);
-				 indexerRepo.save(new Indexer(word,websitesMap,0));
-			}else {
-				Map<String,PageData> websitesMap = new HashMap<String,PageData>();
-				websitesMap.put(title, p);
-				indexerRepo.insert(new Indexer(word,websitesMap,0));		
-//				indexerRepo.findStart
-				indexerRepo.findByWordLike("io");
-			}
-		}
-	}
-	
-	///////////////////////////////////////////////////////////////
 
-	
+	}
+
+	/////////////////////////
+
+
+
 	public void gettingValueIndexer() {
 //		Map<String, PageData> list =  indexerRepo.findAll();
 //		Iterator<Indexer> itr = list.iterator();
-		
+
 		List<Indexer> resOmar  = indexerRepo.findByWordLike("io");
-		
+
 		String m2 = resOmar.get(0).getWord();
 		System.out.println(m2);
-		
-		
-		
+
+
+
 		List<Indexer> res = indexerRepo.findByWord("Save");
 //		res.get(0)
 		System.out.println(res.size());
@@ -361,8 +313,8 @@ public class IndexerService {
 				for (PageData web : m.values()) {
 //					web.print();
 				}
-			
-		}
+
+			}
 		}else {
 			System.out.println("NOOOOOOOOOOOOO");
 		}
@@ -371,5 +323,28 @@ public class IndexerService {
 //			System.out.println(itr.next());
 //		}
 	}
-	
+
 }
+
+
+//class MyRunnable implements Runnable {
+//	  private long start;
+//	  private long end;
+//	  private long count;
+//	  List<CrawlerEntity> listCrawled;
+//	  public MyRunnable(long start,long end,List<CrawlerEntity> listCrawled) {
+//	    this.start = start;
+//	    this.end = end;
+//	    this.listCrawled = listCrawled;
+//	    run();
+//	  }
+//
+//	  @Override
+//	  public void run() {
+//		  int myEnd = listCrawled.size();
+//			for (int i = 0; i < myEnd ; i++) {
+//				CrawlerEntity crawled = listCrawled[i];
+//				addToIndexer_3(crawled.getLink(), crawled.getHtml());
+//			}
+//	  }
+//	}
