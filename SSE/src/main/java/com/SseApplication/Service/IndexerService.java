@@ -111,7 +111,7 @@ public class IndexerService {
 	public static String clean_str(String str) {
 		
 		String returnedStr = str.replaceAll(">", "");
-		returnedStr = returnedStr.replaceAll("[\\]\\|\\[\\@\\,\\$\\%\\*\\&\\\\\\(\\)\\\":]", "");
+		returnedStr = returnedStr.replaceAll("[\\]\\|\\[\\@\\,\\$\\%\\*\\&\\\\\\(\\)\\\":\\?!]", "");
 		returnedStr = returnedStr.replaceAll("\\.+", "");
 	    return returnedStr.toLowerCase();
 	}

@@ -109,7 +109,7 @@ public class QueryProcessorService {
                         {
                             if(instancesInPage[i]!=null && instancesInPage[i].contains(phrase))
                             {
-                                System.out.println("yessss");
+//                                System.out.println("yessss");
                                 Ind2.setWord(filteredd.get(0).toLowerCase());
 
                                 newPageData.setTitle(pageData.getTitle());
