@@ -20,14 +20,12 @@ public class QueryProcessorController {
     @Autowired
     private RankerService rankerserv;
     @GetMapping("/queryprocessor/search/{query}")
-    public List<String>search(@PathVariable String query) {
+    public PriorityQueue<Pair<Double, String[]>> search(@PathVariable String query) {
         List<Indexer> result = queryservice.search_in_indexer(query);
         System.out.println(query);
-        List<String> res= rankerserv.Relevance(result);
+        PriorityQueue<Pair<Double, String[]>> res= rankerserv.Relevance(result);
         return res;
     }
-
-
 
 
 }

@@ -27,7 +27,7 @@ class SearchService {
        print(response);
       if (response.statusCode == 200) {
         print("sucess");
-        final jsonList = json.decode(response.body) as List;
+        final jsonList = json.decode(response.body) as List<dynamic>;
         //final List<Indexer> result = jsonList.map((json) => Indexer.fromJson(json)).toList();
         return jsonList;
       } else {

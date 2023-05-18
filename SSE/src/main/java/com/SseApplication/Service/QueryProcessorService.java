@@ -67,11 +67,11 @@ public class QueryProcessorService {
     }
 
 
-	public static String replaceHahTagsByDots(String str) {
-		String returnedStr = str.replaceAll("#", "\\.");
-		return returnedStr;	
-	}
-	
+    public static String replaceHahTagsByDots(String str) {
+        String returnedStr = str.replaceAll("#", "\\.");
+        return returnedStr;
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////////
 
     public List<Indexer> search_in_indexer(String word)
@@ -93,14 +93,13 @@ public class QueryProcessorService {
                 if(keyword.equals( PorterStemmer.stem(filteredd.get(0).toLowerCase())))
                 {
                     Map<String, PageData> hm = indexer.getHm();
-
                     Indexer Ind2 = new Indexer();
-                    
-                    for (Map.Entry<String,PageData> entry : hm.entrySet())
+                    for (Map.Entry<String,PageData> entry : indexer.getHm().entrySet())
                     {
-                    	String URL = entry.getKey();
-                    	URL = replaceHahTagsByDots(URL);
-                    	PageData pageData = entry.getValue();
+
+                        String URL = entry.getKey();
+                        URL = replaceHahTagsByDots(URL);
+                        PageData pageData = entry.getValue();
                         String[] instancesInPage = pageData.getInstancesInPage();
 
                         PageData newPageData = new PageData();
@@ -124,24 +123,28 @@ public class QueryProcessorService {
                             }
                         }
                         if (foundMatching) {
-                        	Map<String, PageData> localHash = new HashMap<String, PageData>(); ;
-                        	if ( Ind2.getHm() != null ) {
-                        		Ind2.getHm().put(URL,newPageData);
-                        	}else {
-                        		localHash.put(URL, newPageData);
-                        		Ind2.setHm(localHash);
-                        	}
+                            Map<String, PageData> localHash = new HashMap<String, PageData>(); ;
+                            if ( Ind2.getHm() != null ) {
+                                Ind2.getHm().put(URL,newPageData);
+                            }else {
+                                localHash.put(URL, newPageData);
+                                Ind2.setHm(localHash);
+                            }
                         }
-                        	
+
                     }
-                     result.add(Ind2);
+                    if(Ind2.getWord()!=null)
+                    {
+                        result.add(Ind2);
+                    }
+
                 }
             }
             return result;
         }
-        
+
         // Not phrase searching
-        
+
         String newword=clean_str(word);
 
         List<String> newwords=tokenize_str(newword);

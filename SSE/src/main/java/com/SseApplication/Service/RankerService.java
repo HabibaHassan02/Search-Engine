@@ -87,11 +87,11 @@ public class RankerService {
 		String returnedStr = str.replaceAll("#", "\\.");
 		return returnedStr;
 	}
-	public List<String> Relevance(List<Indexer> documents){
+	public PriorityQueue<Pair<Double, String[]>> Relevance(List<Indexer> documents){
 		List<RankerEntity> ranker= rankerRepo.findAll();
-		PriorityQueue<Pair<Double, String>> pq = new PriorityQueue<>(new Comparator<Pair<Double, String>>() {
+		PriorityQueue<Pair<Double, String[]>> pq = new PriorityQueue<>(new Comparator<Pair<Double, String[]>>() {
 			@Override
-			public int compare(Pair<Double, String> p1, Pair<Double, String> p2) {
+			public int compare(Pair<Double, String[]> p1, Pair<Double, String[]> p2) {
 				return Double.compare(p2.getKey(), p1.getKey()); //sort priority queue in descending order according to the Rank value in the key
 			}
 		});
@@ -102,10 +102,12 @@ public class RankerService {
 				PageData data= entry.getValue(); //get the data of the website: tf, title, popularity and instances
 				int pri_acc_to_place=1;
 				String[] instances= data.getInstancesInPage();
+				String stringOfInstance="";
 				for (int i=0; i<8 ;i++){
 					if (instances[i]!=null) //the highest pri is h1: of index 0, so priority = 9 minus index so the highest priority=9 and the smallest=1
 					{
 						pri_acc_to_place = 9 - i;
+						stringOfInstance=instances[i];
 						break;
 					}
 				}
@@ -113,7 +115,8 @@ public class RankerService {
 				if (rankentity.size()>0) {
 					float popularity = rankentity.get(0).getPopularity();
 					double rank = (double)(idf * data.getTf() + popularity)*pri_acc_to_place;
-					pq.add(new Pair<Double,String>(rank, link));
+					String[]dataArray={replaceHashTagsByDots(link),data.getTitle(),stringOfInstance};
+					pq.add(new Pair<Double,String[]>(rank,dataArray));
 				}
 			}
 		}
@@ -122,15 +125,19 @@ public class RankerService {
 		List<String> resultInstance = new ArrayList<>();
 		System.out.println(pq.size());
 
-		if(!pq.isEmpty()) {
+//		if(!pq.isEmpty()) {
+//
+//			for (Pair<Double, String[]> pairobject : pq) {
+//				resultURL.add(replaceHashTagsByDots(pairobject.getValue()));
+//				//resultTitle.add();
+//			}
+//		}
+//		org.bson.Document docToInsert = new org.bson.Document();
+//		docToInsert.append("links",resultURL);
+//		docToInsert.append("titles",resultTitle);
 
-			for (Pair<Double, String> pairobject : pq) {
-				resultURL.add(replaceHashTagsByDots(pairobject.getValue()));
-			}
-		}
-	
 
-		return resultURL;
+		return pq;
 	}
 }
 

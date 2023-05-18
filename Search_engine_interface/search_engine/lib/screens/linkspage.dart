@@ -1,5 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:search_engine/routers/routers.dart';
@@ -24,6 +26,7 @@ class _LinksPageState extends State<LinksPage> {
     super.initState();
     SearchService searchService = SearchService();
     indexes = searchService.getfromranker(widget.query);
+    print("test");
   }
 
   @override
@@ -97,23 +100,53 @@ class _LinksPageState extends State<LinksPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           for (final item in data)
-            GestureDetector(
-              onTap: () async {
-                final url = Uri.parse(item.toString()) ;
-                if (await canLaunchUrl(url)) {
-                  await launchUrl(url);
-                } else {
-                  throw 'Could not launch $url';
-                }
-              },
-              child: Text(
-                item.toString(),
-                style: TextStyle(
-                  color: Colors.blue,
-                  decoration: TextDecoration.underline,
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                border:Border.all(color: Colors.grey),
+
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        final url = Uri.parse(item["value"][0]) ;
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(url);
+                        } else {
+                          throw 'Could not launch $url';
+                        }
+                      },
+                      child: Text(
+                        item["value"][1],
+                        style: TextStyle(
+                          color: Colors.blue,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                    Text(item["value"][0],
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: Colors.grey
+
+                      ),
+                    ),
+                    Text(item["value"][2],
+                      style: TextStyle(
+                        fontSize: 15,
+
+                      ),
+                    ),
+
+                  ],
                 ),
               ),
-            )
+            ),
+
         ],
       );
                    
