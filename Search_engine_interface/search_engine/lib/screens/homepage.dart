@@ -99,6 +99,11 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  Container(
+                    width: 300,
+                      margin: EdgeInsets.only(top:20),
+
+                      child: Image.asset("assets/images/google.png")),
 
                   Container(
                     margin: EdgeInsets.only(top: 40),
