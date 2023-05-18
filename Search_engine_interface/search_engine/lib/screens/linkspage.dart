@@ -20,12 +20,17 @@ class LinksPage extends StatefulWidget {
 
 class _LinksPageState extends State<LinksPage> {
   late Future<List<dynamic>> indexes;
-  
+  late DateTime _startTime;
+
+
   @override
   void initState() {
     super.initState();
     SearchService searchService = SearchService();
     indexes = searchService.getfromranker(widget.query);
+
+    _startTime = DateTime.now();
+
     print("test");
   }
 
@@ -95,10 +100,16 @@ class _LinksPageState extends State<LinksPage> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done)
                 {
+                  final Duration searchTime = DateTime.now().difference(_startTime);
                  final data = snapshot.data as List<dynamic>;
                  return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text("Search time is:"+searchTime.toString()
+            ),
+          ),
           for (final item in data)
             Container(
               width: double.infinity,
