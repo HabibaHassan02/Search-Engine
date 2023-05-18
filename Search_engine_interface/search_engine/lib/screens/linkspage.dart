@@ -16,14 +16,13 @@ class LinksPage extends StatefulWidget {
 }
 
 class _LinksPageState extends State<LinksPage> {
-  late Future<List> indexes;
+  late Future<List<dynamic>> indexes;
   
   @override
   void initState() {
     super.initState();
     SearchService searchService = SearchService();
     indexes = searchService.getfromranker(widget.query);
-
   }
 
   @override
@@ -87,7 +86,32 @@ class _LinksPageState extends State<LinksPage> {
       
       ),
     body: SingleChildScrollView(
-
+    child: FutureBuilder(
+              future: indexes,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done)
+                {
+                 final data = snapshot.data as List<dynamic>;
+                 return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for (final item in data)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Text(item.toString()),
+            ),
+        ],
+      );
+                   
+                }
+                else {
+                  return Container(
+                    decoration: const BoxDecoration(color: Colors.white),
+                    child: const Center(child: CircularProgressIndicator()),
+                  );
+                }
+              }
+            ),
     ));
   }
 }

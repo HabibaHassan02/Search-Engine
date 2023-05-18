@@ -14,7 +14,7 @@ class SearchService {
 
   SearchService([http.Client? httpClient]) : _httpClient = httpClient ?? http.Client();
 
-  Future<List> getfromranker(String query) async {
+  Future<List<dynamic>> getfromranker(String query) async {
     final Map<String, String> headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
