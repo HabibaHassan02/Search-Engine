@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:search_engine/routers/routers.dart';
 import 'package:search_engine/services/search_service.dart';
 import '../Models/Indexer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 class LinksPage extends StatefulWidget {
@@ -96,10 +97,23 @@ class _LinksPageState extends State<LinksPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           for (final item in data)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(item.toString()),
-            ),
+            GestureDetector(
+              onTap: () async {
+                final url = Uri.parse(item.toString()) ;
+                if (await canLaunchUrl(url)) {
+                  await launchUrl(url);
+                } else {
+                  throw 'Could not launch $url';
+                }
+              },
+              child: Text(
+                item.toString(),
+                style: TextStyle(
+                  color: Colors.blue,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            )
         ],
       );
                    

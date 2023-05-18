@@ -117,18 +117,20 @@ public class RankerService {
 				}
 			}
 		}
-		List<String> result = new ArrayList<>();
+		List<String> resultURL = new ArrayList<>();
+		List<String> resultTitle = new ArrayList<>();
+		List<String> resultInstance = new ArrayList<>();
 		System.out.println(pq.size());
 
 		if(!pq.isEmpty()) {
 
 			for (Pair<Double, String> pairobject : pq) {
-				result.add(replaceHashTagsByDots(pairobject.getValue()));
+				resultURL.add(replaceHashTagsByDots(pairobject.getValue()));
 			}
 		}
+	
 
-
-		return result;
+		return resultURL;
 	}
 }
 
