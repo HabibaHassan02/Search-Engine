@@ -87,7 +87,7 @@ public class RankerService {
 		String returnedStr = str.replaceAll("#", "\\.");
 		return returnedStr;
 	}
-	public PriorityQueue<Pair<Double, String>> Relevance(List<Indexer> documents){
+	public List<String> Relevance(List<Indexer> documents){
 		List<RankerEntity> ranker= rankerRepo.findAll();
 		PriorityQueue<Pair<Double, String>> pq = new PriorityQueue<>(new Comparator<Pair<Double, String>>() {
 			@Override
@@ -117,7 +117,18 @@ public class RankerService {
 				}
 			}
 		}
-		return pq;
+		List<String> result = new ArrayList<>();
+		System.out.println(pq.size());
+
+		if(!pq.isEmpty()) {
+
+			for (Pair<Double, String> pairobject : pq) {
+				result.add(replaceHashTagsByDots(pairobject.getValue()));
+			}
+		}
+
+
+		return result;
 	}
 }
 

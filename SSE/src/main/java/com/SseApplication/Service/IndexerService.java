@@ -269,7 +269,7 @@ public class IndexerService {
 	public void indexingProcess() throws IOException {
 		populateTagsLocation();
 		STOPWORDS = loadStopwordsFromFile("stop_words");
-		getCrawledPages();
+		//getCrawledPages();
 		addIDF();
 		System.out.println("Enddddddddddddddddd");
 	}
@@ -277,6 +277,8 @@ public class IndexerService {
 	public void addIDF() {
 		long countCrawledPages = crawlerRepo.count();
 		// iterate over indexer words to get the idf
+
+
 		double idf;
 		List<Indexer>  indexedPages= indexerRepo.findAll();
 		for (Indexer page:indexedPages) {
@@ -284,6 +286,7 @@ public class IndexerService {
 			idf =  Math.log(countCrawledPages/numberPagesContainWord);
 			indexerRepo.save(new Indexer(page.getWord(),page.getHm(),idf));
 		}
+		System.out.println("print");
 
 	}
 
