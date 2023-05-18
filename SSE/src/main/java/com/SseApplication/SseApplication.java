@@ -10,4 +10,5 @@ public class SseApplication {
 		SpringApplication.run(SseApplication.class, args);
 	}
 
+
 }

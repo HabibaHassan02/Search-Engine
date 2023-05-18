@@ -1,18 +1,20 @@
 // ignore_for_file: unused_import
 
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../constants.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:search_engine/Models/Indexer.dart';
 import 'package:search_engine/Models/pagedata.dart';
+import 'dart:collection';
 class SearchService {
   http.Client _httpClient;
 
   SearchService([http.Client? httpClient]) : _httpClient = httpClient ?? http.Client();
 
-  Future<List> getfromqueryprocessor(String query) async {
+  Future<List> getfromranker(String query) async {
     final Map<String, String> headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
@@ -36,4 +38,7 @@ class SearchService {
       throw 'Something went wrong: $e';
     }
   }
+
+  ////////////////////////////
+  
 }

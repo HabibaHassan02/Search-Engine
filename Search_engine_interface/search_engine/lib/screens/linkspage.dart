@@ -22,7 +22,7 @@ class _LinksPageState extends State<LinksPage> {
   void initState() {
     super.initState();
     SearchService searchService = SearchService();
-    indexes = searchService.getfromqueryprocessor(widget.query);
+    //indexes = searchService.getfromqueryprocessor(widget.query);
 
   }
 
