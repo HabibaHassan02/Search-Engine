@@ -14,4 +14,8 @@ public class Counter {
     public synchronized int getCount() {
         return count;
     }
+    public synchronized void setCount(int set){
+        this.count=set;
+
+    }
 }
